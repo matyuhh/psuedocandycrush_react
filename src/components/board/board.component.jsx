@@ -2,14 +2,22 @@ import React, { useEffect, useState } from "react";
 import ScoreBoard from "../scoreboard/scoreboard.component.jsx";
 import {BoardContainer, BoardCandy, BoardWrapper} from './board.styles.jsx';
 
+import blueCandy from '../../img/blue.png';
+import greenCandy from '../../img/green.png';
+import orangeCandy from '../../img/orange.png';
+import purpleCandy from '../../img/purple.png';
+import redCandy from '../../img/red.png';
+import yellowCandy from '../../img/yellow.png';
+import blank from '../../img/blank.png'
+
 const width = 8;
 const candyColors = [
-    'blue',
-    'green',
-    'orange',
-    'purple',
-    'red',
-    'yellow'
+    blueCandy,
+    greenCandy,
+    orangeCandy,
+    purpleCandy,
+    redCandy,
+    yellowCandy
 ];
 
 const Board = () => {
@@ -23,11 +31,11 @@ const Board = () => {
         for(let i = 0; i <= 47; i++) {
             const columnOfThree = [i, i + width, i + width * 2];
             const decidedColor = currentColorArray[i];
-            const isBlank = currentColorArray[i] === '';
+            const isBlank = currentColorArray[i] === blank;
 
             if (columnOfThree.every(square => currentColorArray[square] === decidedColor && !isBlank)){
                 setScoreDisplay((score) => score + 3)
-                columnOfThree.forEach(square => currentColorArray[square] = '')
+                columnOfThree.forEach(square => currentColorArray[square] = blank)
                 return true;
             }
         }
@@ -38,13 +46,13 @@ const Board = () => {
             const rowOfThree = [i, i + 1, i + 2];
             const decidedColor = currentColorArray[i];
             const notValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,63,64]
-            const isBlank = currentColorArray[i] === '';
+            const isBlank = currentColorArray[i] === blank;
 
             if (notValid.includes(i)) continue
 
             if (rowOfThree.every(square => currentColorArray[square] === decidedColor && !isBlank)){
                 setScoreDisplay((score) => score + 3)
-                rowOfThree.forEach(square => currentColorArray[square] = '');
+                rowOfThree.forEach(square => currentColorArray[square] = blank);
                 return true;
             }
         }
@@ -54,11 +62,11 @@ const Board = () => {
         for(let i = 0; i < 39; i++) {
             const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
             const decidedColor = currentColorArray[i];
-            const isBlank = currentColorArray[i] === '';
+            const isBlank = currentColorArray[i] === blank;
 
             if (columnOfFour.every(square => currentColorArray[square] === decidedColor && !isBlank)){
                 setScoreDisplay((score) => score + 4)
-                columnOfFour.forEach(square => currentColorArray[square] = '');
+                columnOfFour.forEach(square => currentColorArray[square] = blank);
                 return true;
             }
         }
@@ -69,13 +77,13 @@ const Board = () => {
             const rowOfFour = [i, i + 1, i + 2, i + 3];
             const decidedColor = currentColorArray[i];
             const notValid = [5,6,7,13,14,15,21,22,23,29,30,31,37,38,39,45,46,47,53,54,55,62,63,64]
-            const isBlank = currentColorArray[i] === '';
+            const isBlank = currentColorArray[i] === blank;
 
             if (notValid.includes(i)) continue
 
             if (rowOfFour.every(square => currentColorArray[square] === decidedColor && !isBlank)){
                 setScoreDisplay((score) => score + 4)
-                rowOfFour.forEach(square => currentColorArray[square] = '');
+                rowOfFour.forEach(square => currentColorArray[square] = blank);
                 return true;
             }
         }
@@ -86,14 +94,14 @@ const Board = () => {
             const firstRow = [0,1,2,3,4,5,6,7];
             const isFirstRow = firstRow.includes(i);
 
-            if (isFirstRow && currentColorArray[i] === ''){
+            if (isFirstRow && currentColorArray[i] === blank){
                 let randomNumber = Math.floor(Math.random() *candyColors.length);
                 currentColorArray[i] = candyColors[randomNumber];
             }
 
-            if (currentColorArray[i + width] === ''){
+            if (currentColorArray[i + width] === blank){
                 currentColorArray[i + width] = currentColorArray[i];
-                currentColorArray[i] = '';
+                currentColorArray[i] = blank;
             }
         }
     }
@@ -108,8 +116,8 @@ const Board = () => {
         const candyBeingDraggedId = parseInt(candyBeingDragged.getAttribute('data-id'));
         const candyBeingReplacedId = parseInt(candyBeingReplaced.getAttribute('data-id'));
 
-        currentColorArray[candyBeingReplacedId] = candyBeingDragged.style.backgroundColor
-        currentColorArray[candyBeingDraggedId] = candyBeingReplaced.style.backgroundColor
+        currentColorArray[candyBeingReplacedId] = candyBeingDragged.getAttribute('src')
+        currentColorArray[candyBeingDraggedId] = candyBeingReplaced.getAttribute('src')
     
         const validMoves = [
             candyBeingDraggedId - 1,
@@ -131,8 +139,8 @@ const Board = () => {
                 setCandyBeingDragged(null);
                 setCandyBeingReplaced(null);
         } else {
-            currentColorArray[candyBeingReplacedId] = candyBeingReplaced.style.backgroundColor;
-            currentColorArray[candyBeingDraggedId] = candyBeingDragged.style.backgroundColor;
+            currentColorArray[candyBeingReplacedId] = candyBeingReplaced.getAttribute('src');
+            currentColorArray[candyBeingDraggedId] = candyBeingDragged.getAttribute('src');
             setCurrentColorArray([...currentColorArray]);
         }
 
@@ -169,7 +177,7 @@ const Board = () => {
                 {currentColorArray.map((candyColor, index) =>(
                     <BoardCandy
                         key={index}
-                        style={{backgroundColor: candyColor}}
+                        src={candyColor}
                         alt={candyColor}
                         data-id={index}
                         draggable={true}
