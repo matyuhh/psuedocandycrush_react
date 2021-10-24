@@ -112,68 +112,76 @@ const Board = () => {
         }
     }
 
-    const checkForLShapeDownRight = () => {
+    const checkForShapeHelper = (i, shape) => {
+        const decidedColor = currentColorArray[i];
+        const isBlank = currentColorArray[i] === '';
+
+        if (shape.every(square => currentColorArray[square] === decidedColor && !isBlank)){
+            setScoreDisplay((score) => score + 10)
+            shape.forEach(square => currentColorArray[square] = '');
+            return true;
+        }
+    }
+
+    const checkForLShape = () => {
+        //DownRight
         for(let i = 0; i <= 47; i++) {
             const shapeL = [i, i + 1, i + 2, i + width, i + width * 2];
-            const decidedColor = currentColorArray[i];
-            const notValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,63,64]
-            const isBlank = currentColorArray[i] === '';
-
+            const notValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,63,64];
             if (notValid.includes(i)) continue
-            
-            if (shapeL.every(square => currentColorArray[square] === decidedColor && !isBlank)){
-                setScoreDisplay((score) => score + 10)
-                shapeL.forEach(square => currentColorArray[square] = '');
-                return true;
-            }
+            checkForShapeHelper(i, shapeL);
         }
-    }
-    const checkForLShapeDownLeft = () => {
+        //DownLeft
         for(let i = 0; i <= 47; i++) {
             const shapeL = [i, i - 1, i - 2, i + width, i + width * 2];
-            const decidedColor = currentColorArray[i];
             const notValid = [0,1,8,9,16,17,24,25,32,33,40,41,48,49,56,57]
-            const isBlank = currentColorArray[i] === '';
-
             if (notValid.includes(i)) continue
-            
-            if (shapeL.every(square => currentColorArray[square] === decidedColor && !isBlank)){
-                setScoreDisplay((score) => score + 10)
-                shapeL.forEach(square => currentColorArray[square] = '');
-                return true;
-            }
+            checkForShapeHelper(i, shapeL);
         }
-    }
-    const checkForLShapeUpLeft = () => {
+        //UpLeft
         for(let i = 16; i < 64; i++) {
             const shapeL = [i, i - 1, i - 2, i - width, i - width * 2];
-            const decidedColor = currentColorArray[i];
             const notValid = [0,1,8,9,16,17,24,25,32,33,40,41,48,49,56,57]
-            const isBlank = currentColorArray[i] === '';
-
             if (notValid.includes(i)) continue
-            
-            if (shapeL.every(square => currentColorArray[square] === decidedColor && !isBlank)){
-                setScoreDisplay((score) => score + 10)
-                shapeL.forEach(square => currentColorArray[square] = '');
-                return true;
-            }
+            checkForShapeHelper(i, shapeL);
         }
-    }
-    const checkForLShapeUpRight = () => {
+        //UpRight
         for(let i = 16; i < 64; i++) {
             const shapeL = [i, i + 1, i + 2, i - width, i - width * 2];
-            const decidedColor = currentColorArray[i];
             const notValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,63,64]
-            const isBlank = currentColorArray[i] === '';
-
             if (notValid.includes(i)) continue
-            
-            if (shapeL.every(square => currentColorArray[square] === decidedColor && !isBlank)){
-                setScoreDisplay((score) => score + 10)
-                shapeL.forEach(square => currentColorArray[square] = '');
-                return true;
-            }
+            checkForShapeHelper(i, shapeL);
+        }
+    }
+    
+    const checkForTShape = () => {
+        //Right
+        for(let i = 0; i <= 55; i++) {
+            const shapeT = [i, i + 1, i + 2, i + width, i - width];
+            const notValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,63,64]
+            if (notValid.includes(i)) continue
+            checkForShapeHelper(i, shapeT);
+        }
+        //Down
+        for(let i = 0; i <= 47; i++) {
+            const shapeT = [i, i - 1, i + 1, i + width, i + width * 2];
+            const notValid = [0,1,8,9,16,17,24,25,32,33,40,41,48,49,56,57]
+            if (notValid.includes(i)) continue
+            checkForShapeHelper(i, shapeT);
+        }
+        //Left
+        for(let i = 8; i < 55; i++) {
+            const shapeT = [i, i - 1, i - 2, i + width, i - width];
+            const notValid = [0,1,8,9,16,17,24,25,32,33,40,41,48,49,56,57]
+            if (notValid.includes(i)) continue
+            checkForShapeHelper(i, shapeT);
+        }
+        //Up
+        for(let i = 16; i < 64; i++) {
+            const shapeT = [i, i + 1, i - 1, i - width, i - width * 2];
+            const notValid = [0,7,8,15,16,23,24,31,32,39,40,47,48,55,56,64]
+            if (notValid.includes(i)) continue
+            checkForShapeHelper(i, shapeT);
         }
     }
 
@@ -216,10 +224,9 @@ const Board = () => {
 
         const validMove = validMoves.includes(candyBeingReplacedId);
 
-        const isLShapeUpLeft = checkForLShapeUpLeft();
-        const isLShapeUpRight = checkForLShapeUpRight();
-        const isLShapeDownLeft = checkForLShapeDownLeft();
-        const isLShapeDownRight = checkForLShapeDownRight();
+        const isTShape = checkForTShape();
+        const isLShape = checkForLShape();
+
         const isAColumnOfFive = checkForColumnOfFive();
         const isARowOfFive = checkForRowOfFive();
         const isAColumnOfFour = checkForColumnOfFour();
@@ -229,8 +236,9 @@ const Board = () => {
 
         if (candyBeingReplacedId && 
             validMove && 
-            (isARowOfThree || isARowOfFour || isAColumnOfFour || isAColumnOfThree || isARowOfFive || isAColumnOfFive || isLShapeDownRight
-                || isLShapeUpLeft || isLShapeUpRight || isLShapeDownLeft
+            (isARowOfThree || isARowOfFour || isAColumnOfFour || isAColumnOfThree || isARowOfFive || isAColumnOfFive 
+                || isLShape
+                || isTShape
             )) {
                 setCandyBeingDragged(null);
                 setCandyBeingReplaced(null);
@@ -257,10 +265,9 @@ const Board = () => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            checkForLShapeUpRight()
-            checkForLShapeUpLeft()
-            checkForLShapeDownLeft()
-            checkForLShapeDownRight()
+            checkForTShape()
+            checkForLShape()
+
             checkForColumnOfFive()
             checkForColumnOfFour()
             checkForColumnOfThree()
@@ -271,7 +278,9 @@ const Board = () => {
             setCurrentColorArray([...currentColorArray])
         }, 100)    
         return () => clearInterval(timer)    
-    }, [checkForLShapeUpRight, checkForLShapeUpLeft, checkForLShapeDownLeft, checkForLShapeDownRight, checkForColumnOfFive, checkForRowOfFive, checkForColumnOfFour, checkForRowOfFour, checkForColumnOfThree, checkForRowOfThree, moveIntoSquareBelow, currentColorArray])
+    }, [checkForTShape,
+        checkForLShape,
+        checkForColumnOfFive, checkForRowOfFive, checkForColumnOfFour, checkForRowOfFour, checkForColumnOfThree, checkForRowOfThree, moveIntoSquareBelow, currentColorArray])
 
     return (
         <BoardContainer>
