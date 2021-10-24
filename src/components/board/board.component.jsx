@@ -68,8 +68,6 @@ const Board = () => {
         }
     }
 
-    
-
     const checkForLShape = () => {
         //DownRight
         for(let i = 0; i <= 47; i++) {
@@ -248,7 +246,7 @@ const Board = () => {
                     <BoardCandy
                         key={index}
                         style={{backgroundColor: candyColor}}
-                        alt={candyColor}
+                        alt={""}
                         data-id={index}
                         draggable={true}
                         onDragStart={dragStart}
