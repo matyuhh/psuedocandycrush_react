@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import ScoreBoard from "../scoreboard/scoreboard.component.jsx";
 import {BoardContainer, BoardCandy, BoardWrapper} from './board.styles.jsx';
 
@@ -19,16 +19,6 @@ const Board = () => {
     const [candyBeingReplaced, setCandyBeingReplaced] = useState(null);
     const [scoreDisplay, setScoreDisplay] = useState(0);
 
-    const checkForShapeHelper = (i, shape, points) => {
-        const decidedColor = currentColorArray[i];
-        const isBlank = currentColorArray[i] === '';
-
-        if (shape.every(square => currentColorArray[square] === decidedColor && !isBlank)){
-            setScoreDisplay((score) => score + points)
-            shape.forEach(square => currentColorArray[square] = '');
-            return true;
-        }
-    }
 
     const checkForColumnOfThree = () => {
         for(let i = 0; i <= 47; i++) {
@@ -142,6 +132,17 @@ const Board = () => {
         }
     }
 
+    const checkForShapeHelper = (i, shape, points) => {
+        const decidedColor = currentColorArray[i];
+        const isBlank = currentColorArray[i] === '';
+
+        if (shape.every(square => currentColorArray[square] === decidedColor && !isBlank)){
+            setScoreDisplay((score) => score + points)
+            shape.forEach(square => currentColorArray[square] = '');
+            return true;
+        }
+    }
+    
     const moveIntoSquareBelow = () => {
         for (let i = 0; i <= 55; i++) {
             const firstRow = [0,1,2,3,4,5,6,7];
@@ -168,16 +169,16 @@ const Board = () => {
     const dragEnd = (e) => {
         const candyBeingDraggedId = parseInt(candyBeingDragged.getAttribute('data-id'));
         const candyBeingReplacedId = parseInt(candyBeingReplaced.getAttribute('data-id'));
+        
+        currentColorArray[candyBeingReplacedId] = candyBeingDragged.style.backgroundColor;
+        currentColorArray[candyBeingDraggedId] = candyBeingReplaced.style.backgroundColor;
 
-        currentColorArray[candyBeingReplacedId] = candyBeingDragged.style.backgroundColor
-        currentColorArray[candyBeingDraggedId] = candyBeingReplaced.style.backgroundColor
-    
         const validMoves = [
             candyBeingDraggedId - 1,
             candyBeingDraggedId - width,
             candyBeingDraggedId + 1,
             candyBeingDraggedId + width
-        ]
+        ];
 
         const validMove = validMoves.includes(candyBeingReplacedId);
 
@@ -193,26 +194,19 @@ const Board = () => {
             const isARowOfThree = checkForRowOfThree();
 
             if (candyBeingReplacedId &&  
-                (isARowOfThree || isARowOfFour || isAColumnOfFour || isAColumnOfThree || isARowOfFive || isAColumnOfFive 
+                (isARowOfThree || isARowOfFour || isARowOfFive 
+                    || isAColumnOfFour || isAColumnOfThree || isAColumnOfFive 
                     || isLShape
                     || isTShape
                 )) {
                     setCandyBeingDragged(null);
-                    setCandyBeingReplaced(null);
-                    
-            } else {
-                currentColorArray[candyBeingReplacedId] = candyBeingReplaced.style.backgroundColor;
-                currentColorArray[candyBeingDraggedId] = candyBeingDragged.style.backgroundColor;
-                setCurrentColorArray([...currentColorArray]);
+                    setCandyBeingReplaced(null);       
             } 
         } else {
             currentColorArray[candyBeingReplacedId] = candyBeingReplaced.style.backgroundColor;
             currentColorArray[candyBeingDraggedId] = candyBeingDragged.style.backgroundColor;
             setCurrentColorArray([...currentColorArray]);
         }
-
-        
-
     }
 
     const createBoard = () => {
