@@ -173,11 +173,22 @@ const Board = () => {
 
         const validMoves = [
             candyBeingDraggedId - 1,
-            candyBeingDraggedId - width,
             candyBeingDraggedId + 1,
+            candyBeingDraggedId - width,
             candyBeingDraggedId + width
         ];
 
+        const leftBorder = [0,8,16,24,32,40,48,56];
+        const rightBorder = [7,15,23,31,39,47,55,63];
+        const topBorder = [0,1,2,3,4,5,6,7];
+        const bottomBorder = [56,57,58,59,60,61,62,63];
+        for (let i = 0; i < leftBorder.length; i++){
+            if(candyBeingDraggedId == leftBorder[i]){validMoves[0] = candyBeingDraggedId + 1}
+            if(candyBeingDraggedId == rightBorder[i]){validMoves[1] = candyBeingDraggedId - 1}
+            if(candyBeingDraggedId == topBorder[i]){validMoves[2] = candyBeingDraggedId - 1}
+            if(candyBeingDraggedId == bottomBorder[i]){validMoves[3] = candyBeingDraggedId - 1}
+        }
+        
         const validMove = validMoves.includes(candyBeingReplacedId);
 
         if (validMove) {
